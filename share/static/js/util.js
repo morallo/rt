@@ -458,11 +458,11 @@ function AddAttachmentWarning() {
 
 function toggle_addprincipal_validity(input, good, title) {
     if (good) {
-        jQuery(input).nextAll(".warning").hide();
-        jQuery("#acl-AddPrincipal input[type=checkbox]").removeAttr("disabled");
+        jQuery("#acl-AddPrincipal .valid-group").removeClass("hidden");
+        jQuery("#acl-AddPrincipal .invalid-group").addClass("hidden");
     } else {
-        jQuery(input).nextAll(".warning").css("display", "block");
-        jQuery("#acl-AddPrincipal input[type=checkbox]").attr("disabled", "disabled");
+        jQuery("#acl-AddPrincipal .invalid-group").removeClass("hidden");
+        jQuery("#acl-AddPrincipal .valid-group").addClass("hidden");
     }
 
     if (title == null)
@@ -472,7 +472,7 @@ function toggle_addprincipal_validity(input, good, title) {
 }
 
 function update_addprincipal_title(title) {
-    var h3 = jQuery("#acl-AddPrincipal h3");
+    var h3 = jQuery("#acl-AddPrincipal .valid-group h3");
     h3.text( h3.text().replace(/: .*$/,'') + ": " + title );
 }
 
@@ -494,6 +494,13 @@ function addprincipal_onselect(ev, ui) {
 }
 
 function addprincipal_test_validity(input) {
+    // autocomplete won't run if the input field is empty
+    // and we know that an empty input field should hide the panel
+    if (input.val() == "") {
+        toggle_addprincipal_validity(input, false);
+        return;
+    }
+
     // Check using the same autocomplete source if the value typed would
     // have been autocompleted and is therefore valid
     jQuery.ajax({
